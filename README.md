@@ -1,4 +1,4 @@
-# covid-tracker
+# africa-africa
 
 ## Project setup
 ```
