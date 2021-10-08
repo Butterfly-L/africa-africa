@@ -1,30 +1,61 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div class="flex">
+    <SideBar @ismenuopen="checkMenuOpen" />
+    <div class="ml-auto transition w-full" :class="{ 'pl-56': isMenuOpen }">
+      <Header :title="title" />
+      <router-view v-slot="{ Component }">
+        <transition name="fade">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+      <transition name="fade">
+        <Loading v-if="isLoading" />
+      </transition>
+    </div>
   </div>
-  <router-view/>
 </template>
 
+<script>
+import Header from "@/components/Header";
+import SideBar from "@/components/SideBar";
+import Loading from "@/components/Loading";
+
+export default {
+  components: {
+    Header,
+    SideBar,
+    Loading,
+  },
+  data() {
+    return {
+      isMenuOpen: true,
+      title: "",
+    };
+  },
+  methods: {
+    checkMenuOpen(value) {
+      console.log("isMenuOpen" + value);
+      this.isMenuOpen = value;
+    },
+  },
+  watch: {
+    routerName: {
+      handler() {
+        this.title = this.$router.currentRoute._rawValue.name;
+      },
+      deep: true,
+    },
+  },
+  computed: {
+    isLoading() {
+      return this.$store.state.isPageLoading;
+    },
+    routerName() {
+      return this.$router;
+    },
+  },
+};
+</script>
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
+@import "assets/styles/common.css";
 </style>
