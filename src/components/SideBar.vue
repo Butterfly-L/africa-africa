@@ -5,20 +5,27 @@
   >
     <section
       class="text-center bg-yellow-500 text-black p-4 pt-16 mb-10 h-screen border-r-8 border-black flex flex-col"
-      :class="{ 'hidden': !isMenuOpen }"
+      :class="{ 'hidden': !isMenuOpen}"
     >
-      <div v-for="menu in menuContent" :key="menu" class="text-2xl mb-4">
-        <router-link :to="`${menu.to}`" class="border-black" :class="[isCurrentPage(menu.to) ? 'border-b-4' : '']">{{ menu.name }}</router-link>
+      <div v-for="menu in menuContent" :key="menu" class="text-2xl mb-4" @click="closeMenu">
+        <router-link v-if="menu.enabled" :to="`${menu.to}`">
+          <h4 class="border-black" :class="[isCurrentPage(menu.to) ? 'border-b-4' : '']">{{ menu.name }}</h4>
+        </router-link>
       </div>
-      <div class="mt-auto mb-4"><img class="w-full" src="../assets/images/logo.svg" alt=""/></div>
+      <div class="mt-auto mb-4" @click="closeMenu">
+        <router-link to="/">
+          <img class="w-full" src="../assets/images/logo.svg" alt=""/>
+        </router-link>
+      </div>
       <div class="" href="">Copyright © Rachel &#129419</div>
     </section>
-    <div class="transition absolute" :class="{'opacity-50': !isMenuOpen && !isLogoHover}" 
-    :style="{ right: logoPosition, left: logoPositionLeft }"
+    <div class="transition absolute w-28" :class="[{'opacity-50': !isMenuOpen && !isLogoHover}, {'left-60': isMenuOpen}, {'left-0': isMenuOpen}  ]" 
     @mouseover="isLogoHover = true" @mouseleave="isLogoHover = false">
-      <router-link to="/"><img class="mb-4 mt-4 w-28" src="../assets/images/logo.svg" alt=""/></router-link>
+      <router-link @click="closeMenu" to="/" v-if="!isMobile">
+        <img class="mb-4 mt-4 w-28" src="../assets/images/logo.svg" alt=""/>
+      </router-link>
       <img
-        @click="openMenu"
+        @click="toggleMenu"
         class="icon cursor-pointer transform transition"
         :class="{ 'rotate-180': !isMenuOpen }"
         src="../assets/images/arrow.svg"
@@ -37,22 +44,30 @@ export default {
       isMenuOpen: true,
       isLogoHover: false,
       currentPath:'',
+      isMobile: false,
       menuContent: [
-        { name: "Learn from map", to: "/map" },
-        { name: "Africa News", to: "/news" },
-        { name: "lights to Africa", to: "/" },
-        { name: "Books about Africa", to: "/" },
-        { name: "Game time!", to: "/" },
+        { name: "Home", to: "/", enabled: true, },
+        { name: "Learn from map", to: "/map", enabled: true, },
+        { name: "Africa News", to: "/news", enabled: false, },
+        { name: "lights to Africa", to: "/", enabled: false },
+        { name: "Books about Africa", to: "/", enabled: false },
+        { name: "Game time!", to: "/", enabled: false },
       ],
     };
   },
   methods: {
-    openMenu() {
+    toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
-      this.$emit("ismenuopen", this.isMenuOpen);
+      // this.$emit("ismenuopen", this.isMenuOpen);
+      this.$store.commit('setMenuOpen', this.isMenuOpen);
     },
     isCurrentPage(to){
       return this.currentPath === to
+    },
+    closeMenu(){
+      if(!this.isMobile) return;
+      this.isMenuOpen = false;
+      this.$store.commit('setMenuOpen', this.isMenuOpen);
     }
   },
   watch: {
@@ -62,16 +77,27 @@ export default {
       },
       deep: true,
     },
+    checkIsMobile:{
+      handler() {
+        this.isMobile = this.$_isMobile();
+        if(this.isMobile){
+          this.isMenuOpen = false;
+          // this.$emit("ismenuopen", this.isMenuOpen);
+          this.$store.commit('setMenuOpen', this.isMenuOpen);
+        }
+
+      },
+      deep: true,
+      immediate: true,
+    }
   },
   computed: {
-      logoPosition(){
-      return this.isMenuOpen ? '-7rem' : '';
-    },
-    logoPositionLeft(){
-      return this.isMenuOpen ? '' : '0';
-    },
     routerName(){
       return this.$router;
+    },
+    checkIsMobile(){
+      console.log('isMobile',this.$_isMobile());
+      return this.$_isMobile();
     }
   }
 };

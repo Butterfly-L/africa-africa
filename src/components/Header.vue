@@ -1,8 +1,9 @@
 <template>
   <header
-    class="h-36 w-full text-center text-5xl font-lobster text-white flex items-end justify-center pb-4"
+    class="w-full text-center text-5xl font-lobster text-white flex items-end justify-center pb-4"
+    :class="[isHome ? 'h-56' : 'h-36']"
   >
-    {{ title }}
+    <h1>{{ title }}</h1>
   </header>
 </template>
 
@@ -17,6 +18,7 @@ export default {
     return {
       isMenuOpen: true,
       isLogoHover: false,
+      isHome: false,
       // logoPosition: '-7rem',
       menuContent: [
         { name: "Learn from map", to: "map" },
@@ -35,9 +37,18 @@ export default {
   },
   computed: {
     logoPosition() {
-      // let rightPosition = isMenuOpen ? '-7rem' : '0rem';
-      // console.log('rightPosition'+ rightPosition);
       return this.isMenuOpen ? "-7rem" : "0rem";
+    },
+    router() {
+      return this.$router;
+    },
+  },
+  watch: {
+    router: {
+      handler() {
+        this.isHome = this.$router.currentRoute._rawValue.path === "/";
+      },
+      deep: true,
     },
   },
 };

@@ -1,17 +1,23 @@
 <template>
-  <main class="flex flex-wrap justify-center p-8">
-    <div class="info text-black pt-12">
-      <h2 @click="test">Select a country!</h2>
-      <span></span>
-      Population:
-      <p></p>
+  <div class="flex flex-wrap justify-center">
+    <div
+      class="info text-black text-2xl text-center"
+      :class="[isMobile ? 'w-full' : 'w-2/5 pt-12']"
+    >
+      <span class="text-5xl"></span>
+      <h2>Select a country!</h2>
+      <p class="pt-2"></p>
     </div>
-    <svg class="map"></svg>
-  </main>
+    <svg
+      class="map h-screen cursor-pointer"
+      :class="[isMobile ? 'w-full' : 'w-3/5']"
+      viewBox="420 130 150 350"
+      preserveAspectRatio="xMinYMin"
+    ></svg>
+  </div>
 </template>
 <script>
 import * as d3 from "d3";
-import store from "../store";
 
 export default {
   name: "MapView",
@@ -27,35 +33,26 @@ export default {
       africaFlags: [],
       minPopulation: null,
       maxPopulation: null,
+      currentCountry: "",
     };
   },
   methods: {
-    test() {
-      console.log(this.$store.commit("setNumberWithComma", 156666));
-    },
-    draw() {
+    getAfricaCountries() {
       return d3.json(
         "https://raw.githubusercontent.com/codeforgermany/click_that_hood/master/public/data/africa.geojson"
       );
     },
     drawMap() {
-      console.log("minPopulation" + this.minPopulation);
-
       var data = this.d3Result;
 
-      // draw The svg
       const width = window.innerWidth * 0.7;
       const height = window.innerHeight * 0.6;
       const svg = d3.select(".map");
+      if (this.isMobile) svg.attr("viewBox", "430 130 190 250");
 
-      // Map and projection
-      const projection = d3
-        .geoMercator()
-        .scale(400) //scale：設定地圖縮放倍率
-        .translate([width / 4, height / 1.5]);
+      const projection = d3.geoMercator();
 
       let geoGenerator = d3.geoPath().projection(projection);
-      //d3.geoPath：將投影資料轉換為 path 的路徑
 
       let color = d3
         .scaleQuantize()
@@ -64,7 +61,6 @@ export default {
 
       let self = this;
 
-      // Draw the map
       svg
         .append("g")
         .selectAll("path")
@@ -78,7 +74,7 @@ export default {
         .attr("data-population", function(d) {
           let population =
             self.africaPopulations[d.properties.name.replace(/\s*/g, "")];
-          return self.setNumberWithComma(population);
+          return self.$_setNumberWithComma(population);
         })
         .attr("data-flag", function(d) {
           let flag = self.africaFlags[d.properties.name.replace(/\s*/g, "")];
@@ -91,13 +87,17 @@ export default {
         .on("mouseout", handleMouseLeave);
 
       function handleMouseOver(e, d) {
-        let centroid = geoGenerator.centroid(d);
         let population = d3.select(this).attr("data-population");
         let flag = d3.select(this).attr("data-flag");
 
-        d3.select(".info>h2").html(d.properties.name);
-        d3.select(".info>span").html(flag);
-        d3.select(".info>p").html(population);
+        d3.select(".info h2").html(d.properties.name);
+        d3.select(".info span").html(flag);
+
+        let populationText = population
+          ? `Population: + ${population}`
+          : "Sorry, we don't have data yet. &#128542;";
+
+        d3.select(".info p").html(populationText);
 
         d3.select(this)
           .transition()
@@ -105,7 +105,9 @@ export default {
           .attr("fill", "yellow");
       }
       function handleMouseLeave(e, i) {
-        e.preventDefault();
+        d3.select(".info h2").html("Select a country!");
+        d3.select(".info span").html("");
+        d3.select(".info p").html("");
 
         d3.select(this)
           .transition()
@@ -176,11 +178,23 @@ export default {
     isLoading() {
       return this.$store.state.isPageLoading;
     },
+    isMobile() {
+      return this.$_isMobile();
+    },
+    isMobileStyle() {
+      let style = this.$_isMobile() ? "flex-col items-center" : "";
+      console.log("style" + style);
+      return style;
+    },
   },
   created() {
     this.$store.commit("setLoading", true);
 
-    Promise.all([this.draw(), this.getPopulation(), this.getFlagUnicode()])
+    Promise.all([
+      this.getAfricaCountries(),
+      this.getPopulation(),
+      this.getFlagUnicode(),
+    ])
       .then(([africa, population, flags]) => {
         let result = africa.features.map((i) => i.properties.name);
         this.d3Result = africa;
@@ -206,17 +220,7 @@ export default {
 };
 </script>
 <style lang="css">
-.map {
-  width: 60%;
-  height: 100vh;
-  cursor: pointor;
-}
-
 .info {
-  width: 40%;
-  text-align: center;
-  color: #69b3a2;
-  font-weight: 400;
-  font-size: 40px;
+  min-height: 120px;
 }
 </style>

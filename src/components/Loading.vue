@@ -5,7 +5,7 @@
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="300"
-      viewBox="0 0 150 110.133"
+      viewBox="0 0 120 110.133"
     >
       <g
         id="Group_62"

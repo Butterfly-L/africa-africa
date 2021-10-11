@@ -1,13 +1,18 @@
 <template>
   <div class="flex">
     <SideBar @ismenuopen="checkMenuOpen" />
-    <div class="ml-auto transition w-full" :class="{ 'pl-56': isMenuOpen }">
+    <div
+      class="ml-auto transition w-full"
+      :class="{ 'pl-56': isMenuOpen && !isMobile }"
+    >
       <Header :title="title" />
-      <router-view v-slot="{ Component }">
-        <transition name="fade">
-          <component :is="Component" />
-        </transition>
-      </router-view>
+      <main :class="[isMobile ? 'p-4 flex-col items-center' : 'p-8']">
+        <router-view v-slot="{ Component }">
+          <transition name="fade">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </main>
       <transition name="fade">
         <Loading v-if="isLoading" />
       </transition>
@@ -28,7 +33,7 @@ export default {
   },
   data() {
     return {
-      isMenuOpen: true,
+      // isMenuOpen: true,
       title: "",
     };
   },
@@ -39,7 +44,7 @@ export default {
     },
   },
   watch: {
-    routerName: {
+    router: {
       handler() {
         this.title = this.$router.currentRoute._rawValue.name;
       },
@@ -50,8 +55,14 @@ export default {
     isLoading() {
       return this.$store.state.isPageLoading;
     },
-    routerName() {
+    router() {
       return this.$router;
+    },
+    isMenuOpen() {
+      return this.$store.state.isMenuOpen;
+    },
+    isMobile() {
+      return this.$_isMobile();
     },
   },
 };

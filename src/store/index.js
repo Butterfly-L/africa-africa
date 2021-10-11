@@ -1,8 +1,11 @@
 import { createStore } from 'vuex'
+import africaCountries from "../assets/scripts/africaCountries";
 
 const state = createStore({
   state: {
     isPageLoading: false,
+    isMenuOpen: true,
+    africanCountries: Object.keys(africaCountries),
   },
   action:{
   },
@@ -15,6 +18,9 @@ const state = createStore({
       if(state.isPageLoading) body.style.overflow ="hidden";
       if(!state.isPageLoading) body.style.overflow ="auto";
     },
+    setMenuOpen(state, value){
+      state.isMenuOpen = value;
+    }
   }
 })
 
