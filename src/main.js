@@ -6,5 +6,6 @@ import store from './store'
 import './assets/tailwind.css'
 import common from './assets/scripts/common'
 import './assets/styles/common.css'
+import i18n from './i18n'
 
-createApp(App).use(store).use(router).mixin(common).mount('#app')
+createApp(App).use(i18n).use(store).use(router).mixin(common).mount('#app')

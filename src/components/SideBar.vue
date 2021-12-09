@@ -4,9 +4,10 @@
     style="min-width: 7rem;"
   >
     <section
-      class="text-center bg-yellow-500 text-black p-4 pt-16 mb-10 h-screen border-r-8 border-black flex flex-col"
+      class="text-center bg-yellow-500 text-black p-4 mb-10 h-screen border-r-8 border-black flex flex-col"
       :class="{ 'hidden': !isMenuOpen}"
     >
+      <div class="mb-8"><Select ref="languageSelect" @onChange="changeLang" :options="languageList" :defaultWord="'Please select a language'" /></div>
       <div v-for="menu in menuContent" :key="menu" class="text-2xl mb-4" @click="closeMenu">
         <router-link v-if="menu.enabled" :to="`${menu.to}`">
           <h4 class="border-black" :class="[isCurrentPage(menu.to) ? 'border-b-4' : '']">{{ menu.name }}</h4>
@@ -34,10 +35,11 @@
     </div>
   </header>
 </template>
-
 <script>
+import Select from "@/components/Select";
 export default {
   name: "SideBarr",
+  components: {Select,},
   emits: ["ismenuopen"],
   data() {
     return {
@@ -45,6 +47,7 @@ export default {
       isLogoHover: false,
       currentPath:'',
       isMobile: false,
+      languageList: [{name:'English', value:'en'},{name:'繁體中文', value:'zh-TW' },{name:'简体中文', value:'zh-CN'}],
       menuContent: [
         { name: "Home", to: "/", enabled: true, },
         { name: "Learn from map", to: "/map", enabled: true, },
@@ -58,17 +61,21 @@ export default {
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
-      // this.$emit("ismenuopen", this.isMenuOpen);
       this.$store.commit('setMenuOpen', this.isMenuOpen);
     },
     isCurrentPage(to){
       return this.currentPath === to
     },
     closeMenu(){
-      if(!this.isMobile) return;
+      console.log('closeMenu');
+      // if(!this.isMobile) return;
+      if(!this.$_isMobile()) return;
       this.isMenuOpen = false;
       this.$store.commit('setMenuOpen', this.isMenuOpen);
-    }
+    },
+    changeLang(value){
+      this.$i18n.locale = value;
+    },
   },
   watch: {
     routerName: {
@@ -81,9 +88,7 @@ export default {
       handler() {
         this.isMobile = this.$_isMobile();
         if(this.isMobile){
-          this.isMenuOpen = false;
-          // this.$emit("ismenuopen", this.isMenuOpen);
-          this.$store.commit('setMenuOpen', this.isMenuOpen);
+          this.closeMenu();
         }
 
       },
@@ -96,9 +101,12 @@ export default {
       return this.$router;
     },
     checkIsMobile(){
-      console.log('isMobile',this.$_isMobile());
       return this.$_isMobile();
     }
+  },
+  mounted(){
+    window.addEventListener('resize', this.closeMenu);
+    this.$refs.languageSelect.selected = 'en';
   }
 };
 </script>

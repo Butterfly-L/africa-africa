@@ -33,13 +33,11 @@ export default {
   },
   data() {
     return {
-      // isMenuOpen: true,
       title: "",
     };
   },
   methods: {
     checkMenuOpen(value) {
-      console.log("isMenuOpen" + value);
       this.isMenuOpen = value;
     },
   },
@@ -64,6 +62,9 @@ export default {
     isMobile() {
       return this.$_isMobile();
     },
+    mounted(){
+      
+    }
   },
 };
 </script>

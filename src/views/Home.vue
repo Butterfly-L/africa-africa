@@ -4,17 +4,9 @@
       <div class="w-full lg:w-4/5 mr-4 mb-4 lg: mb-0">
         <div class="border-b-4 border-yellow-400 flex">
           <img class="mr-2" src="../assets/images/africa.svg" alt="" />
-          <h4 class="font-bold">Africa is not the one we thought anymore.</h4>
+          <h4 class="font-bold">{{ $t("home.title") }}</h4>
         </div>
-        <p class="mt-4">
-          Africa is not the one we thought anymore. Africa is not the one we
-          thought anymore. Africa is not the one we thought anymore. Africa is
-          not the one we thought anymore. Africa is not the one we thought
-          anymore. Africa is not the one we thought anymore. Africa is not the
-          one we thought anymore. Africa is not the one we thought anymore.
-          Africa is not the one we thought anymore. Africa is not the one we
-          thought anymore. Africa is not the one we thought anymore.
-        </p>
+        <p class="mt-4">{{ $t("home.description") }}</p>
         <div class="flex flex-wrap mt-4">
           <Tag
             v-for="(tag, i) in tags"
@@ -29,19 +21,11 @@
     </div>
     <div class="main-form border-t-4 border-black text-center">
       <h2>Explore Africa with Us!</h2>
-      <select
-        name="countries"
-        id=""
-        class="border-double border-4 border-black mt-4"
-      >
-        <option value="0"><h4>Please Select a country</h4></option>
-        <option
-          v-for="country in africanCountries"
-          :key="country"
-          value="country"
-          >{{ country }}</option
-        >
-      </select>
+      <Select
+        :options="africanCountries"
+        :defaultWord="'Select a country'"
+        @onChange="selectCountry"
+      />
       <p class="mt-4">
         Choose an Africa country that you are interested in, or we will randomly
         push all information!
@@ -52,10 +36,11 @@
 
 <script>
 import Tag from "@/components/Tag";
+import Select from "@/components/Select";
 
 export default {
   name: "Home",
-  components: { Tag },
+  components: { Tag, Select },
   data() {
     return {
       africanCountries: [],
@@ -67,8 +52,23 @@ export default {
       ],
     };
   },
+  methods: {
+    selectCountry(value) {
+      console.log("value" + value);
+      // const country = this.countries.find((item) => item.ID === this.selected);
+      // this.$emit("get-country", country);
+    },
+  },
   mounted() {
-    this.africanCountries = this.$store.state.africanCountries;
+    this.africanCountries = this.$store.state.africanCountries.map(
+      (country) => {
+        return {
+          name: country,
+          value: country,
+        };
+      }
+    );
+
     this.$store.commit("setLoading", true);
 
     this.$nextTick(() => this.$store.commit("setLoading", false));

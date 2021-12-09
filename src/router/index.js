@@ -10,7 +10,7 @@ const routes = [
   },
   {
     path: '/map',
-    name: 'Learn Africa with Map',
+    name: 'Learn Africa on Map',
     component: ()=>import('../views/MapView.vue'),
   },
   {
