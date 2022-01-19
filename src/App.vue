@@ -1,6 +1,5 @@
 <template>
   <div class="flex">
-    <SideBar @ismenuopen="checkMenuOpen" />
     <div
       class="ml-auto transition w-full"
       :class="{ 'pl-56': isMenuOpen && !isMobile }"
@@ -17,6 +16,7 @@
         <Loading v-if="isLoading" />
       </transition>
     </div>
+    <SideBar @ismenuopen="checkMenuOpen" />
   </div>
 </template>
 
@@ -62,9 +62,7 @@ export default {
     isMobile() {
       return this.$_isMobile();
     },
-    mounted(){
-      
-    }
+    mounted() {},
   },
 };
 </script>

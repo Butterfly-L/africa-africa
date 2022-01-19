@@ -57,3 +57,43 @@ h4 {
     font-size: 1.2rem;
   }
 }
+
+.card {
+  margin: 25px 20px 0px 0px;
+  background-color: #facf74;
+  /* background: repeating-linear-gradient(
+    -55deg,
+    #fff,
+    #fff 30px,
+    #fddb91 30px,
+    #fddb91 90px
+  ); */
+  @apply p-4 rounded-xl shadow-md transition-all cursor-pointer;
+}
+
+.card img {
+  height: 15rem;
+  width: 15rem;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 1rem auto;
+  opacity: 0.8;
+}
+
+.card:hover {
+  margin: 20px 20px 5px 0;
+  box-shadow: 5px 5px grey;
+  opacity: 1;
+}
+
+.card_upper {
+  @apply flex border-b-2 pb-2 border-white w-full;
+}
+
+.ball {
+  @apply rounded-full bg-white w-4 h-4;
+}
+
+a:hover .arrow {
+  margin-left: 10px;
+}

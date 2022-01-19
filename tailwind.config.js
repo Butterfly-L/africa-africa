@@ -1,6 +1,6 @@
 module.exports = {
-  purge: { content: ['./public/**/*.html', './src/**/*.vue'] },
-  // mode: 'jit',
+  purge: { content: ['./public/**/*.html', './src/**/*.{vue,js,html}'] },
+  mode: 'jit',
   darkMode: false, // or 'media' or 'class'
   theme: {
     minWidth: {
@@ -18,10 +18,15 @@ module.exports = {
     container: {
       center: true,
       padding: '2rem',
-    }
+    },
+    animation: {
+      fadeIn: 'fadeIn 1s ease-in-out 1',
+     },
   },
   variants: {
-    extend: {},
+    extend: {
+      animation: ['hover'],
+    },
   },
   plugins: [],
 }
