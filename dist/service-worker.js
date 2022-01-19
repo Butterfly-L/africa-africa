@@ -14,11 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-<<<<<<< HEAD
-  "precache-manifest.7380fcb4acc7afdce2f58ae6b3e01c71.js"
-=======
-  "precache-manifest.c430753d8182cc87e4f7403cb92fa323.js"
->>>>>>> 953684c... [feature]Add People page
+  "precache-manifest.7cbbf297b79a3302405d488fc2977821.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "Africa!"});
